@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-// useNavigate not needed in this component
+import { FaChevronDown } from "react-icons/fa";
 import API from "../api/api";
 import Layout from "../components/Layout";
 
 function ItineraryBuilder() {
-  // navigate not used
+  const [searchParams] = useSearchParams();
+  const queryTripId = searchParams.get("tripId");
+
   const [formData, setFormData] = useState({
-    trip_id: "",
+    trip_id: queryTripId || "",
     city_name: "",
     country: "",
     country_code: "",
@@ -19,6 +22,22 @@ function ItineraryBuilder() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [trips, setTrips] = useState([]);
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await API.get("/trips", {
+          headers: { Authorization: `${token}` },
+        });
+        setTrips(res.data?.trips || []);
+      } catch (err) {
+        console.error("Failed to load trips for dropdown", err);
+      }
+    };
+    fetchTrips();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -92,17 +111,25 @@ function ItineraryBuilder() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300 ml-1">Trip ID *</label>
-                <input
-                  type="text"
-                  name="trip_id"
-                  placeholder="ID of the trip"
-                  value={formData.trip_id}
-                  onChange={handleChange}
-                  className="glass-input"
-                  required
-                />
+              <div className="flex flex-col gap-1.5 relative">
+                <label className="text-sm font-medium text-slate-300 ml-1">Trip *</label>
+                <div className="relative w-full">
+                  <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <select
+                    name="trip_id"
+                    value={formData.trip_id}
+                    onChange={handleChange}
+                    className="glass-input w-full pr-10 appearance-none bg-slate-900/80 cursor-pointer"
+                    required
+                  >
+                    <option value="" disabled>Select a Trip...</option>
+                    {trips.map(t => (
+                      <option key={t._id} value={t._id} className="bg-slate-900 text-white">
+                        {t.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">

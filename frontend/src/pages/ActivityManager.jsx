@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import API from "../api/api";
 import Layout from "../components/Layout";
 
 function ActivityManager() {
+  const [searchParams] = useSearchParams();
+  const queryStopId = searchParams.get("stopId");
+
   const [formData, setFormData] = useState({
-    stop_id: "",
+    stop_id: queryStopId || "",
     name: "",
     category: "",
     cost: "",

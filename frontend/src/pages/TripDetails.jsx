@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag, FaMoneyBillWave, FaArrowLeft, FaShareAlt, FaPlus } from "react-icons/fa";
+import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag, FaMoneyBillWave, FaArrowLeft, FaShareAlt, FaPlus, FaChartPie } from "react-icons/fa";
 import API from "../api/api";
 import Layout from "../components/Layout";
 
@@ -117,7 +117,10 @@ function TripDetails() {
                 <FaShareAlt /> Share
               </button>
             )}
-            <Link to="/itinerary-builder" className="btn-primary px-4 py-2 text-sm flex items-center gap-2">
+            <Link to={`/budget?tripId=${id}`} className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+              <FaChartPie className="text-purple-400" /> Analyze Budget
+            </Link>
+            <Link to={`/itinerary-builder?tripId=${id}`} className="btn-primary px-4 py-2 text-sm flex items-center gap-2">
               <FaPlus /> Add Stop
             </Link>
           </div>
@@ -217,7 +220,7 @@ function TripDetails() {
                         </p>
                       </div>
                     </div>
-                    <Link to="/activities" className="text-primary-400 hover:text-primary-300 text-sm font-medium">
+                    <Link to={`/activities?stopId=${item.stop._id}`} className="text-primary-400 hover:text-primary-300 text-sm font-medium">
                       + Add Activity
                     </Link>
                   </div>

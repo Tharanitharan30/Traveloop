@@ -1,17 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaSearch, FaMoneyBillWave, FaClock, FaChartPie, FaMapMarkerAlt } from "react-icons/fa";
+import { FaSearch, FaMoneyBillWave, FaClock, FaChartPie, FaMapMarkerAlt, FaChevronDown } from "react-icons/fa";
 import API from "../api/api";
 import Layout from "../components/Layout";
 
 function BudgetDashboard() {
-  const [tripId, setTripId] = useState("");
+  const [searchParams] = useSearchParams();
+  const queryTripId = searchParams.get("tripId");
+
+  const [tripId, setTripId] = useState(queryTripId || "");
+  const [trips, setTrips] = useState([]);
   const [budgetData, setBudgetData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const getBudget = async () => {
-    if (!tripId.trim()) return;
+  // Fetch all user trips for the dropdown
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await API.get("/trips", {
+          headers: { Authorization: `${token}` },
+        });
+        setTrips(res.data?.trips || []);
+      } catch (err) {
+        console.error("Failed to load trips for dropdown", err);
+      }
+    };
+    fetchTrips();
+  }, []);
+
+  useEffect(() => {
+    if (queryTripId) {
+      getBudget(queryTripId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryTripId]);
+
+  const getBudget = async (idToFetch = tripId) => {
+    if (typeof idToFetch !== "string" || !idToFetch.trim()) return;
     
     setLoading(true);
     setError("");
@@ -19,7 +47,7 @@ function BudgetDashboard() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await API.get(`/budget/${tripId}`, {
+      const res = await API.get(`/budget/${idToFetch}`, {
         headers: { Authorization: `${token}` },
       });
       setBudgetData(res.data);
@@ -39,18 +67,27 @@ function BudgetDashboard() {
 
       <div className="glass-panel p-6 rounded-3xl mb-10 flex flex-col md:flex-row gap-4 items-center max-w-2xl">
         <div className="relative flex-grow w-full">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Enter Trip ID to analyze..."
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" />
+          <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" />
+          <select
             value={tripId}
-            onChange={(e) => setTripId(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && getBudget()}
-            className="glass-input w-full pl-11"
-          />
+            onChange={(e) => {
+              setTripId(e.target.value);
+              // Optionally auto-fetch when selected from dropdown:
+              // getBudget(e.target.value);
+            }}
+            className="glass-input w-full pl-11 pr-10 appearance-none bg-slate-900/80 cursor-pointer"
+          >
+            <option value="" disabled>Select a Trip to analyze...</option>
+            {trips.map(t => (
+              <option key={t._id} value={t._id} className="bg-slate-900 text-white">
+                {t.name}
+              </option>
+            ))}
+          </select>
         </div>
         <button
-          onClick={getBudget}
+          onClick={() => getBudget(tripId)}
           disabled={loading || !tripId.trim()}
           className={`btn-primary whitespace-nowrap ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
         >
@@ -153,3 +190,4 @@ function BudgetDashboard() {
 }
 
 export default BudgetDashboard;
+
