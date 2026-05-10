@@ -43,7 +43,7 @@ exports.getTripBudget = async (
       trip_id: tripId,
     });
 
-    let totalBudget = 0;
+    let activityBudget = 0;
 
     let stopBreakdown = [];
 
@@ -61,7 +61,7 @@ exports.getTripBudget = async (
         stopTotal += activity.cost;
       });
 
-      totalBudget += stopTotal;
+      activityBudget += stopTotal;
 
       stopBreakdown.push({
         stop_id: stop._id,
@@ -88,6 +88,9 @@ exports.getTripBudget = async (
         (1000 * 60 * 60 * 24)
       ) + 1;
 
+    const tripBudget = Number(trip.budget || 0);
+    const totalBudget = tripBudget > 0 ? tripBudget : activityBudget;
+
     const averagePerDay =
       totalBudget / totalDays;
 
@@ -95,6 +98,10 @@ exports.getTripBudget = async (
       success: true,
 
       trip_name: trip.name,
+
+      trip_budget: tripBudget,
+
+      activity_budget: activityBudget,
 
       total_budget: totalBudget,
 

@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag, FaMoneyBillWave, FaArrowLeft, FaShareAlt, FaPlus, FaChartPie } from "react-icons/fa";
+import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag, FaMoneyBillWave, FaArrowLeft, FaShareAlt, FaPlus, FaChartPie, FaTrash } from "react-icons/fa";
 import API from "../api/api";
 import Layout from "../components/Layout";
 
 function TripDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
   const [itinerary, setItinerary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchTripDetails();
@@ -69,6 +71,30 @@ function TripDetails() {
     }
   };
 
+  const handleDeleteTrip = async () => {
+    const confirmed = window.confirm(
+      "Delete this trip? This will remove the trip and its related data."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setDeleting(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const headers = { Authorization: `${token}` };
+
+      await API.delete(`/trips/${id}`, { headers });
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete trip.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -123,6 +149,13 @@ function TripDetails() {
             <Link to={`/itinerary-builder?tripId=${id}`} className="btn-primary px-4 py-2 text-sm flex items-center gap-2">
               <FaPlus /> Add Stop
             </Link>
+            <button
+              onClick={handleDeleteTrip}
+              disabled={deleting}
+              className="inline-flex items-center gap-2 bg-red-500/15 hover:bg-red-500/25 text-red-300 px-4 py-2 rounded-xl text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <FaTrash /> {deleting ? "Deleting..." : "Delete Trip"}
+            </button>
           </div>
         </div>
 

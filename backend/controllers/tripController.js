@@ -11,6 +11,7 @@ exports.createTrip = async (req, res) => {
     const {
       name,
       description,
+      budget,
       start_date,
       end_date,
       cover_photo,
@@ -23,6 +24,7 @@ exports.createTrip = async (req, res) => {
 
       name,
       description,
+      budget,
       start_date,
       end_date,
 

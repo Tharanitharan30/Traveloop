@@ -76,7 +76,7 @@ function BudgetDashboard() {
               // Optionally auto-fetch when selected from dropdown:
               // getBudget(e.target.value);
             }}
-            className="glass-input w-full pl-11 pr-10 appearance-none bg-slate-900/80 cursor-pointer"
+            className="glass-input w-full !pl-11 !pr-10 appearance-none bg-slate-900/80 cursor-pointer"
           >
             <option value="" disabled>Select a Trip to analyze...</option>
             {trips.map(t => (

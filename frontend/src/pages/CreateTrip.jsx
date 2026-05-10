@@ -14,6 +14,7 @@ function CreateTrip() {
     description: "",
     start_date: "",
     end_date: "",
+    budget: "",
     cover_photo: "",
     is_public: false,
   });
@@ -32,6 +33,11 @@ function CreateTrip() {
     setLoading(true);
     setError("");
 
+    const payload = {
+      ...formData,
+      budget: formData.budget === "" ? undefined : Number(formData.budget),
+    };
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -40,7 +46,7 @@ function CreateTrip() {
         return;
       }
 
-      await API.post("/trips", formData, {
+      await API.post("/trips", payload, {
         headers: { Authorization: `${token}` },
       });
 
@@ -91,7 +97,7 @@ function CreateTrip() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-300 ml-1">Description</label>
+              <label className="text-sm font-medium text-slate-300 ml-1">Description (Optional)</label>
               <textarea
                 name="description"
                 placeholder="What is the purpose of this trip?"
@@ -128,16 +134,21 @@ function CreateTrip() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-300 ml-1">Cover Photo URL</label>
+              <label className="text-sm font-medium text-slate-300 ml-1">Budget</label>
               <input
-                type="url"
-                name="cover_photo"
-                placeholder="https://example.com/image.jpg"
-                value={formData.cover_photo}
+                type="number"
+                name="budget"
+                min="0"
+                step="0.01"
+                placeholder="e.g. 50000"
+                value={formData.budget}
                 onChange={handleChange}
                 className="glass-input"
               />
+              <p className="text-xs text-slate-500 ml-1">Optional trip budget in your local currency.</p>
             </div>
+
+           
 
             <div className="flex items-center gap-3 mt-2 bg-slate-900/30 p-4 rounded-xl border border-white/5">
               <input

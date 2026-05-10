@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Navbar() {
   const user = JSON.parse(
     localStorage.getItem("user") || '{"username": "Guest"}'
@@ -28,28 +30,30 @@ function Navbar() {
       <div className="flex items-center gap-4">
         {/* Subtle notification or action area could go here */}
         
-        <div className="
-          flex items-center gap-3
-          bg-slate-800/50
-          border border-white/5
-          px-2
-          py-1.5
-          pr-4
-          rounded-full
-          hover:bg-slate-800
-          transition-colors
-          cursor-pointer
-        ">
+        <Link
+          to="/profile"
+          className="
+            flex items-center gap-3
+            bg-slate-800/50
+            border border-white/5
+            px-2
+            py-1.5
+            pr-4
+            rounded-full
+            hover:bg-slate-800
+            transition-colors
+          "
+        >
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-500 to-secondary-500 flex items-center justify-center text-sm font-bold text-white shadow-inner">
             {user?.username?.charAt(0).toUpperCase()}
           </div>
           <span className="text-sm font-medium text-slate-200">
             {user?.username}
           </span>
-        </div>
+        </Link>
       </div>
     </div>
   );
 }
 
-export default Navbar;
+export default Navbar;

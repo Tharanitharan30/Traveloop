@@ -14,7 +14,12 @@ const tripSchema = new mongoose.Schema({
 
   description: {
     type: String,
-    required: true,
+    default: "",
+  },
+
+  budget: {
+    type: Number,
+    default: 0,
   },
 
   start_date: {

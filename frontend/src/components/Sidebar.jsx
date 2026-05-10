@@ -14,7 +14,6 @@ function Sidebar() {
     { name: "Dashboard", path: "/dashboard", icon: FaHome },
     { name: "Create Trip", path: "/create-trip", icon: FaMapMarkedAlt },
     { name: "Budget", path: "/budget", icon: FaWallet },
-    { name: "Public Trips", path: "/public/demo", icon: FaGlobe },
   ];
 
   return (
@@ -107,4 +106,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default Sidebar;

@@ -8,6 +8,7 @@ import ActivityManager from "./pages/ActivityManager";
 import BudgetDashboard from "./pages/BudgetDashboard";
 import PublicTrip from "./pages/PublicTrip";
 import TripDetails from "./pages/TripDetails";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/itinerary-builder" element={<ItineraryBuilder />} />
         <Route path="/activities" element={<ActivityManager />} />
         <Route path="/budget" element={<BudgetDashboard />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/public/:shareToken" element={<PublicTrip />} />
       </Routes>
     </BrowserRouter>
